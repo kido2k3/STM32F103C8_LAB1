@@ -31,10 +31,10 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define LED_RED_ON 0
-#define LED_GREEN_ON 1
-#define LED_YELLOW_ON 2
-#define TIME_RED 5000 //5s
+#define RED_GREEN 0
+#define RED_YELLOW 1
+#define YELLOW_RED 2
+#define GREEN_RED 3
 #define TIME_GREEN 3000 //3s
 #define TIME_YELLOW 2000 //2s
 
@@ -92,37 +92,53 @@ int main(void) {
 	/* Initialize all configured peripherals */
 	MX_GPIO_Init();
 	/* USER CODE BEGIN 2 */
-
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 0);
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, 1);
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, 1);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, 1);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, 0);
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1) {
 		switch (led_st) {
-		case LED_RED_ON:
+		case RED_GREEN:
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 0);
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, 1);
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, 1);
-			if (HAL_GetTick() - cur_time > TIME_RED) {
-				led_st = LED_GREEN_ON;
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, 1);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, 0);
+			if (HAL_GetTick() - cur_time > TIME_GREEN) {
+				led_st = RED_YELLOW;
 				cur_time = HAL_GetTick();
 			}
 			break;
-		case LED_GREEN_ON:
+		case RED_YELLOW:
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, 0);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, 1);
+			if (HAL_GetTick() - cur_time > TIME_YELLOW) {
+				led_st = GREEN_RED;
+				cur_time = HAL_GetTick();
+			}
+			break;
+		case GREEN_RED:
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 1);
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, 1);
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, 0);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, 1);
 			if (HAL_GetTick() - cur_time > TIME_GREEN) {
-				led_st = LED_YELLOW_ON;
+				led_st = YELLOW_RED;
 				cur_time = HAL_GetTick();
 			}
 			break;
 		default:
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 1);
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, 0);
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, 1);
 			if (HAL_GetTick() - cur_time > TIME_YELLOW) {
-				led_st = LED_RED_ON;
+				led_st = RED_GREEN;
 				cur_time = HAL_GetTick();
 			}
 		}
@@ -178,9 +194,14 @@ static void MX_GPIO_Init(void) {
 
 	/* GPIO Ports Clock Enable */
 	__HAL_RCC_GPIOA_CLK_ENABLE();
+	__HAL_RCC_GPIOB_CLK_ENABLE();
 
 	/*Configure GPIO pin Output Level */
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7,
+			GPIO_PIN_RESET);
+
+	/*Configure GPIO pin Output Level */
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7,
 			GPIO_PIN_RESET);
 
 	/*Configure GPIO pins : PA5 PA6 PA7 */
@@ -189,6 +210,13 @@ static void MX_GPIO_Init(void) {
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+	/*Configure GPIO pins : PB5 PB6 PB7 */
+	GPIO_InitStruct.Pin = GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7;
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 	/* USER CODE BEGIN MX_GPIO_Init_2 */
 	/* USER CODE END MX_GPIO_Init_2 */
