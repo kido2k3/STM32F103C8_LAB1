@@ -96,7 +96,6 @@ int main(void) {
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1) {
-		/* USER CODE END WHILE */
 		switch (led_st) {
 		case LED_ON:
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 1);
@@ -112,6 +111,8 @@ int main(void) {
 				cur_time = HAL_GetTick();
 			}
 		}
+		/* USER CODE END WHILE */
+
 		/* USER CODE BEGIN 3 */
 	}
 	/* USER CODE END 3 */
