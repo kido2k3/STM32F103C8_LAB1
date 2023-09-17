@@ -515,6 +515,7 @@ int main(void)
  8000434:	4992      	ldr	r1, [pc, #584]	; (8000680 <main+0x2b8>)
  8000436:	f7ff ff9f 	bl	8000378 <init7SEG>
 			GPIO_PIN_11, GPIO_PIN_8, GPIO_PIN_9);
+
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 0);
  800043a:	2200      	movs	r2, #0
  800043c:	2120      	movs	r1, #32
@@ -545,11 +546,11 @@ int main(void)
  800046e:	2180      	movs	r1, #128	; 0x80
  8000470:	4883      	ldr	r0, [pc, #524]	; (8000680 <main+0x2b8>)
  8000472:	f000 fcdf 	bl	8000e34 <HAL_GPIO_WritePin>
+  /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	while (1) {
-
 		switch (led_st) {
  8000476:	8efb      	ldrh	r3, [r7, #54]	; 0x36
  8000478:	2b03      	cmp	r3, #3

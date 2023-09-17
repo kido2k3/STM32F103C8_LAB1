@@ -104,6 +104,7 @@ int main(void)
 
 	init7SEG(&ledB, GPIOB, GPIO_PIN_0, GPIO_PIN_1, GPIO_PIN_2, GPIO_PIN_10,
 			GPIO_PIN_11, GPIO_PIN_8, GPIO_PIN_9);
+
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 0);
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, 1);
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, 1);
@@ -115,7 +116,6 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	while (1) {
-
 		switch (led_st) {
 		case RED_GREEN:
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 0);
