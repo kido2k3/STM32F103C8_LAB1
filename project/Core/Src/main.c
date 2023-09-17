@@ -98,10 +98,12 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
+
 	init7SEG(&ledA, GPIOA, GPIO_PIN_0, GPIO_PIN_1, GPIO_PIN_2, GPIO_PIN_3,
-	GPIO_PIN_4, GPIO_PIN_8, GPIO_PIN_9);
-	init7SEG(&ledB, GPIOB, GPIO_PIN_0, GPIO_PIN_1, GPIO_PIN_2, GPIO_PIN_3,
-	GPIO_PIN_4, GPIO_PIN_8, GPIO_PIN_9);
+			GPIO_PIN_4, GPIO_PIN_8, GPIO_PIN_9);
+
+	init7SEG(&ledB, GPIOB, GPIO_PIN_0, GPIO_PIN_1, GPIO_PIN_2, GPIO_PIN_10,
+			GPIO_PIN_11, GPIO_PIN_8, GPIO_PIN_9);
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 0);
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, 1);
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, 1);
@@ -113,82 +115,76 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	while (1) {
-		for (int i = 0; i <= 9; i++) {
-			display7SEG(&ledA, i);
-			display7SEG(&ledB, i);
-			HAL_Delay(1000);
-		}
 
-		/*
-		 switch (led_st) {
-		 case RED_GREEN:
-		 HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 0);
-		 HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, 1);
-		 HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, 1);
-		 HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
-		 HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, 1);
-		 HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, 0);
-		 display7SEG(&ledA, counterA);
-		 display7SEG(&ledB, counterB);
-		 if (HAL_GetTick() - timer_7seg > SECONDS) {
-		 counterA--;
-		 counterB--;
-		 if (counterA < 0 || counterB < 0) {
-		 led_st = RED_YELLOW;
-		 counterB = YELLOW;
-		 }
-		 timer_7seg = HAL_GetTick();
-		 }
-		 break;
-		 case RED_YELLOW:
-		 HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, 0);
-		 HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, 1);
-		 display7SEG(&ledA, counterA);
-		 display7SEG(&ledB, counterB);
-		 if (HAL_GetTick() - timer_7seg > SECONDS) {
-		 counterA--;
-		 counterB--;
-		 if (counterA < 0 || counterB < 0) {
-		 led_st = GREEN_RED;
-		 counterA = GREEN;
-		 counterB = GREEN + YELLOW;
-		 }
-		 timer_7seg = HAL_GetTick();
-		 }
-		 break;
-		 case GREEN_RED:
-		 HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 1);
-		 HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, 0);
-		 HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
-		 HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, 1);
-		 display7SEG(&ledA, counterA);
-		 display7SEG(&ledB, counterB);
-		 if (HAL_GetTick() - timer_7seg > SECONDS) {
-		 counterA--;
-		 counterB--;
-		 if (counterA < 0 || counterB < 0) {
-		 led_st = YELLOW_RED;
-		 counterA = YELLOW;
-		 }
-		 timer_7seg = HAL_GetTick();
-		 }
-		 break;
-		 default:
-		 HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, 0);
-		 HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, 1);
-		 display7SEG(&ledA, counterA);
-		 display7SEG(&ledB, counterB);
-		 if (HAL_GetTick() - timer_7seg > SECONDS) {
-		 counterA--;
-		 counterB--;
-		 if (counterA < 0 || counterB < 0) {
-		 led_st = RED_GREEN;
-		 counterA = YELLOW + GREEN;
-		 counterB = GREEN;
-		 }
-		 timer_7seg = HAL_GetTick();
-		 }
-		 }*/
+		switch (led_st) {
+		case RED_GREEN:
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 0);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, 1);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, 1);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, 1);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, 0);
+			display7SEG(&ledA, counterA);
+			display7SEG(&ledB, counterB);
+			if (HAL_GetTick() - timer_7seg > SECONDS) {
+				counterA--;
+				counterB--;
+				if (counterA <= 0 || counterB <= 0) {
+					led_st = RED_YELLOW;
+					counterB = YELLOW;
+				}
+				timer_7seg = HAL_GetTick();
+			}
+			break;
+		case RED_YELLOW:
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, 0);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, 1);
+			display7SEG(&ledA, counterA);
+			display7SEG(&ledB, counterB);
+			if (HAL_GetTick() - timer_7seg > SECONDS) {
+				counterA--;
+				counterB--;
+				if (counterA <= 0 || counterB <= 0) {
+					led_st = GREEN_RED;
+					counterA = GREEN;
+					counterB = GREEN + YELLOW;
+				}
+				timer_7seg = HAL_GetTick();
+			}
+			break;
+		case GREEN_RED:
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 1);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, 0);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, 1);
+			display7SEG(&ledA, counterA);
+			display7SEG(&ledB, counterB);
+			if (HAL_GetTick() - timer_7seg > SECONDS) {
+				counterA--;
+				counterB--;
+				if (counterA <= 0 || counterB <= 0) {
+					led_st = YELLOW_RED;
+					counterA = YELLOW;
+				}
+				timer_7seg = HAL_GetTick();
+			}
+			break;
+		default:
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, 0);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, 1);
+			display7SEG(&ledA, counterA);
+			display7SEG(&ledB, counterB);
+			if (HAL_GetTick() - timer_7seg > SECONDS) {
+				counterA--;
+				counterB--;
+				if (counterA <= 0 || counterB <= 0) {
+					led_st = RED_GREEN;
+					counterA = YELLOW + GREEN;
+					counterB = GREEN;
+				}
+				timer_7seg = HAL_GetTick();
+			}
+		}
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -253,8 +249,8 @@ static void MX_GPIO_Init(void)
                           |GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3
-                          |GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_10
+                          |GPIO_PIN_11|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7
                           |GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : PA0 PA1 PA2 PA3
@@ -268,11 +264,11 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PB0 PB1 PB2 PB3
-                           PB4 PB5 PB6 PB7
+  /*Configure GPIO pins : PB0 PB1 PB2 PB10
+                           PB11 PB5 PB6 PB7
                            PB8 PB9 */
-  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3
-                          |GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7
+  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_10
+                          |GPIO_PIN_11|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7
                           |GPIO_PIN_8|GPIO_PIN_9;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
