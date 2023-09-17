@@ -53,8 +53,9 @@ void display7SEG(const struct seven_led *led, unsigned short i) {
 		display(led, 1, 1, 1, 1, 1, 1, 1);
 	}
 }
-void init7SEG(struct seven_led *led, GPIO_TypeDef *gpio, uint16_t pin_a, uint16_t pin_b, uint16_t pin_c,
-		uint16_t pin_d, uint16_t pin_e, uint16_t pin_f, uint16_t pin_g) {
+void init7SEG(struct seven_led *led, GPIO_TypeDef *gpio, uint16_t pin_a,
+		uint16_t pin_b, uint16_t pin_c, uint16_t pin_d, uint16_t pin_e,
+		uint16_t pin_f, uint16_t pin_g) {
 	led->gpio = gpio;
 	led->pin_a = pin_a;
 	led->pin_b = pin_b;
