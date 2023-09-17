@@ -21,7 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "../MyLib/segment_led.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -37,7 +37,7 @@
 #define GREEN_RED 3
 #define TIME_GREEN 3000 //3s
 #define TIME_YELLOW 2000 //2s
-
+#define SECONDS 1000 // 1s
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -79,25 +79,30 @@ int main(void) {
 
 	/* USER CODE BEGIN Init */
 	unsigned short led_st = 0;
+	unsigned short counterA = (TIME_GREEN + TIME_YELLOW) / 1000;
+	unsigned short counterB = TIME_GREEN / 1000;
 	unsigned long cur_time = HAL_GetTick();
+	unsigned long timer_7seg = HAL_GetTick();
+	struct seven_led ledA;
+	struct seven_led ledB;
+
 	/* USER CODE END Init */
 
 	/* Configure the system clock */
 	SystemClock_Config();
 
 	/* USER CODE BEGIN SysInit */
-
+	init7SEG(&ledA, GPIOA, GPIOA, GPIOA, GPIOA, GPIOA, GPIOA, GPIOA, GPIO_PIN_0,
+	GPIO_PIN_1, GPIO_PIN_2, GPIO_PIN_3, GPIO_PIN_4, GPIO_PIN_8,
+	GPIO_PIN_9);
+	init7SEG(&ledB, GPIOB, GPIOB, GPIOB, GPIOB, GPIOB, GPIOB, GPIOB, GPIO_PIN_0,
+	GPIO_PIN_1, GPIO_PIN_2, GPIO_PIN_3, GPIO_PIN_4, GPIO_PIN_8,
+	GPIO_PIN_9);
 	/* USER CODE END SysInit */
 
 	/* Initialize all configured peripherals */
 	MX_GPIO_Init();
 	/* USER CODE BEGIN 2 */
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 0);
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, 1);
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, 1);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, 1);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, 0);
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
@@ -111,15 +116,32 @@ int main(void) {
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, 1);
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, 0);
+			if (HAL_GetTick() - timer_7seg > SECONDS) {
+				display7SEG(&ledA, counterA--);
+				display7SEG(&ledB, counterB--);
+				timer_7seg = HAL_GetTick();
+			}
 			if (HAL_GetTick() - cur_time > TIME_GREEN) {
+				if (counterB <= 0)
+					counterB = TIME_YELLOW / 1000;
 				led_st = RED_YELLOW;
 				cur_time = HAL_GetTick();
+
 			}
 			break;
 		case RED_YELLOW:
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, 0);
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, 1);
+			if (HAL_GetTick() - timer_7seg > SECONDS) {
+				display7SEG(&ledA, counterA--);
+				display7SEG(&ledB, counterB--);
+				timer_7seg = HAL_GetTick();
+			}
 			if (HAL_GetTick() - cur_time > TIME_YELLOW) {
+				if (counterA <= 0)
+					counterA = TIME_GREEN / 1000;
+				if (counterB <= 0)
+					counterB = (TIME_GREEN + TIME_YELLOW) / 1000;
 				led_st = GREEN_RED;
 				cur_time = HAL_GetTick();
 			}
@@ -129,7 +151,14 @@ int main(void) {
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, 0);
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, 1);
+			if (HAL_GetTick() - timer_7seg > SECONDS) {
+				display7SEG(&ledA, counterA--);
+				display7SEG(&ledB, counterB--);
+				timer_7seg = HAL_GetTick();
+			}
 			if (HAL_GetTick() - cur_time > TIME_GREEN) {
+				if (counterA <= 0)
+					counterA = TIME_YELLOW / 1000;
 				led_st = YELLOW_RED;
 				cur_time = HAL_GetTick();
 			}
@@ -137,7 +166,16 @@ int main(void) {
 		default:
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, 0);
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, 1);
+			if (HAL_GetTick() - timer_7seg > SECONDS) {
+				display7SEG(&ledA, counterA--);
+				display7SEG(&ledB, counterB--);
+				timer_7seg = HAL_GetTick();
+			}
 			if (HAL_GetTick() - cur_time > TIME_YELLOW) {
+				if (counterB <= 0)
+					counterB = TIME_GREEN / 1000;
+				if (counterA <= 0)
+					counterA = (TIME_GREEN + TIME_YELLOW) / 1000;
 				led_st = RED_GREEN;
 				cur_time = HAL_GetTick();
 			}
@@ -197,25 +235,40 @@ static void MX_GPIO_Init(void) {
 	__HAL_RCC_GPIOB_CLK_ENABLE();
 
 	/*Configure GPIO pin Output Level */
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7,
-			GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOA,
+			GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4
+					| GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7 | GPIO_PIN_8
+					| GPIO_PIN_9, GPIO_PIN_RESET);
 
 	/*Configure GPIO pin Output Level */
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7,
-			GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOB,
+			GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_6
+					| GPIO_PIN_7 | GPIO_PIN_8 | GPIO_PIN_9, GPIO_PIN_RESET);
 
-	/*Configure GPIO pins : PA5 PA6 PA7 */
-	GPIO_InitStruct.Pin = GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7;
+	/*Configure GPIO pins : PA0 PA1 PA2 PA3
+	 PA4 PA5 PA6 PA7
+	 PA8 PA9 */
+	GPIO_InitStruct.Pin = GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3
+			| GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7 | GPIO_PIN_8
+			| GPIO_PIN_9;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-	/*Configure GPIO pins : PB5 PB6 PB7 */
-	GPIO_InitStruct.Pin = GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7;
+	/*Configure GPIO pins : PB0 PB1 PB4 PB5
+	 PB6 PB7 PB8 PB9 */
+	GPIO_InitStruct.Pin = GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_4 | GPIO_PIN_5
+			| GPIO_PIN_6 | GPIO_PIN_7 | GPIO_PIN_8 | GPIO_PIN_9;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+	/*Configure GPIO pins : PB2 PB3 */
+	GPIO_InitStruct.Pin = GPIO_PIN_2 | GPIO_PIN_3;
+	GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 	/* USER CODE BEGIN MX_GPIO_Init_2 */
