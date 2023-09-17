@@ -11,13 +11,7 @@
 #include <stdint.h>
 #include "../Inc/main.h"
 struct seven_led {
-	GPIO_TypeDef *gpio_a;
-	GPIO_TypeDef *gpio_b;
-	GPIO_TypeDef *gpio_c;
-	GPIO_TypeDef *gpio_d;
-	GPIO_TypeDef *gpio_e;
-	GPIO_TypeDef *gpio_f;
-	GPIO_TypeDef *gpio_g;
+	GPIO_TypeDef *gpio;
 	uint16_t pin_a;
 	uint16_t pin_b;
 	uint16_t pin_c;
@@ -26,9 +20,8 @@ struct seven_led {
 	uint16_t pin_f;
 	uint16_t pin_g;
 };
-void init7SEG(struct seven_led *led, GPIO_TypeDef *gpio_a, GPIO_TypeDef *gpio_b,GPIO_TypeDef *gpio_c,
-		GPIO_TypeDef *gpio_d, GPIO_TypeDef *gpio_e, GPIO_TypeDef *gpio_f,
-		GPIO_TypeDef *gpio_g, uint16_t pin_a, uint16_t pin_b, uint16_t pin_c,
-		uint16_t pin_d, uint16_t pin_e, uint16_t pin_f, uint16_t pin_g);
+void init7SEG(struct seven_led *led, GPIO_TypeDef *gpio, uint16_t pin_a,
+		uint16_t pin_b, uint16_t pin_c, uint16_t pin_d, uint16_t pin_e,
+		uint16_t pin_f, uint16_t pin_g);
 void display7SEG(const struct seven_led *led, unsigned short i);
 #endif /* SEGMENT_LED_H_ */
