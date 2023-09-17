@@ -1,0 +1,2 @@
+../Core/MyLib/segment_led.c:9:6:display7SEG	16	static
+../Core/MyLib/segment_led.c:111:6:init7SEG	24	static

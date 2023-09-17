@@ -21,7 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include"../MyLib/segment_led.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -31,11 +31,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define LED_ON 1
-#define LED_OFF 0
-#define TIME_ON 1000 //1s
-#define TIME_OFF 1000 //1s
-
+#define TIME_DELAY 1000
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -76,8 +72,9 @@ int main(void) {
 	HAL_Init();
 
 	/* USER CODE BEGIN Init */
-	unsigned short led_st = 0;
+	unsigned short counter = 0;
 	unsigned long cur_time = HAL_GetTick();
+	struct seven_led led;
 	/* USER CODE END Init */
 
 	/* Configure the system clock */
@@ -90,26 +87,19 @@ int main(void) {
 	/* Initialize all configured peripherals */
 	MX_GPIO_Init();
 	/* USER CODE BEGIN 2 */
-
+	init7SEG(&led, GPIO_PIN_1, GPIO_PIN_2, GPIO_PIN_3, GPIO_PIN_4, GPIO_PIN_5,
+			GPIO_PIN_6, GPIO_PIN_7);
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1) {
-		switch (led_st) {
-		case LED_ON:
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 1);
-			if (HAL_GetTick() - cur_time > TIME_ON) {
-				led_st = LED_OFF;
-				cur_time = HAL_GetTick();
-			}
-			break;
-		default:
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 0);
-			if (HAL_GetTick() - cur_time > TIME_OFF) {
-				led_st = LED_ON;
-				cur_time = HAL_GetTick();
-			}
+		if (counter > 9)
+			counter = 0;
+		display7SEG(&led, counter);
+		if (HAL_GetTick() - cur_time > TIME_DELAY) {
+			cur_time = HAL_GetTick();
+			counter++;
 		}
 		/* USER CODE END WHILE */
 
@@ -165,10 +155,14 @@ static void MX_GPIO_Init(void) {
 	__HAL_RCC_GPIOA_CLK_ENABLE();
 
 	/*Configure GPIO pin Output Level */
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOA,
+			GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_5
+					| GPIO_PIN_6 | GPIO_PIN_7, GPIO_PIN_RESET);
 
-	/*Configure GPIO pin : PA5 */
-	GPIO_InitStruct.Pin = GPIO_PIN_5;
+	/*Configure GPIO pins : PA1 PA2 PA3 PA4
+	 PA5 PA6 PA7 */
+	GPIO_InitStruct.Pin = GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4
+			| GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
