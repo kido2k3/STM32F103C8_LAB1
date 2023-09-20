@@ -22,6 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include"../MyLib/software_timer.h"
+#include"../MyLib/clock12led.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -31,7 +32,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define TIME_DELAY 100 //1s
+#define TIME_DELAY 1 //1s
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -73,8 +74,9 @@ int main(void) {
 
 	/* USER CODE BEGIN Init */
 	struct s_timer timer;
-	uint16_t led_pre = GPIO_PIN_4;
-	uint16_t led_cur = GPIO_PIN_5;
+	uint8_t hour = 0;
+	uint8_t minute = 0;
+	uint8_t second = 0;
 	/* USER CODE END Init */
 
 	/* Configure the system clock */
@@ -87,57 +89,26 @@ int main(void) {
 	/* Initialize all configured peripherals */
 	MX_GPIO_Init();
 	/* USER CODE BEGIN 2 */
-	HAL_GPIO_WritePin(GPIOA, led_pre, 0);
-	HAL_GPIO_WritePin(GPIOA, led_cur, 1);
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1) {
-
+		SetClock(hour, minute, second);
 		if (!timer.st) {
-			set_timer(&timer, TIME_DELAY);
-			led_pre = led_cur;
-			switch (led_cur) {
-			case GPIO_PIN_4:
-				led_cur = GPIO_PIN_5;
-				break;
-			case GPIO_PIN_5:
-				led_cur = GPIO_PIN_6;
-				break;
-			case GPIO_PIN_6:
-				led_cur = GPIO_PIN_7;
-				break;
-			case GPIO_PIN_7:
-				led_cur = GPIO_PIN_8;
-				break;
-			case GPIO_PIN_8:
-				led_cur = GPIO_PIN_9;
-				break;
-			case GPIO_PIN_9:
-				led_cur = GPIO_PIN_10;
-				break;
-			case GPIO_PIN_10:
-				led_cur = GPIO_PIN_11;
-				break;
-			case GPIO_PIN_11:
-				led_cur = GPIO_PIN_12;
-				break;
-			case GPIO_PIN_12:
-				led_cur = GPIO_PIN_13;
-				break;
-			case GPIO_PIN_13:
-				led_cur = GPIO_PIN_14;
-				break;
-			case GPIO_PIN_14:
-				led_cur = GPIO_PIN_15;
-				break;
-			default:
-				led_cur = GPIO_PIN_4;
-				break;
+			second++;
+			if (second > 59) {
+				minute++;
+				second = 0;
 			}
-			HAL_GPIO_TogglePin(GPIOA, led_pre);
-			HAL_GPIO_TogglePin(GPIOA, led_cur);
+			if (minute > 59) {
+				hour++;
+				minute = 0;
+			}
+			if (hour > 12) {
+				hour = 0;
+			}
+			set_timer(&timer, TIME_DELAY);
 		}
 		run_timer(&timer);
 		HAL_Delay(10);
@@ -216,7 +187,6 @@ static void MX_GPIO_Init(void) {
 }
 
 /* USER CODE BEGIN 4 */
-
 /* USER CODE END 4 */
 
 /**
