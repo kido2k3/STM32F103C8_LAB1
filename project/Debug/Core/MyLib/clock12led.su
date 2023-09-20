@@ -1,0 +1,4 @@
+../Core/MyLib/clock12led.c:9:6:clearAllClock	16	static
+../Core/MyLib/clock12led.c:15:6:setNumberOnClock	16	static
+../Core/MyLib/clock12led.c:58:6:clearNumberOnClock	16	static
+../Core/MyLib/clock12led.c:101:6:SetClock	16	static

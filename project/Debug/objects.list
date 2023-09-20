@@ -1,3 +1,4 @@
+"./Core/MyLib/clock12led.o"
 "./Core/MyLib/segment_led.o"
 "./Core/MyLib/software_timer.o"
 "./Core/Src/main.o"
