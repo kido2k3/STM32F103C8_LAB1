@@ -32,7 +32,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define TIME_DELAY 1000
+#define TIME_DELAY 100
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
