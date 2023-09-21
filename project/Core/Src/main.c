@@ -22,6 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "../MyLib/segment_led.h"
+#include "../MyLib/software_timer.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -37,7 +38,7 @@
 #define GREEN_RED 3
 #define GREEN 3 //3s
 #define YELLOW 2 //2s
-#define SECONDS 1000 // 1s
+#define SECONDS 100 // 1s
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -81,17 +82,16 @@ int main(void) {
 	unsigned short led_st = 0;
 	unsigned short counterA = (GREEN + YELLOW);
 	unsigned short counterB = GREEN;
-	unsigned long timer_7seg = HAL_GetTick();
 	struct seven_led ledA;
 	struct seven_led ledB;
-
+	struct s_timer timer;
 	/* USER CODE END Init */
 
 	/* Configure the system clock */
 	SystemClock_Config();
 
 	/* USER CODE BEGIN SysInit */
-
+	set_timer(&timer, SECONDS);
 	/* USER CODE END SysInit */
 
 	/* Initialize all configured peripherals */
@@ -125,7 +125,7 @@ int main(void) {
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, 0);
 			display7SEG(&ledA, counterA);
 			display7SEG(&ledB, counterB);
-			if (HAL_GetTick() - timer_7seg > SECONDS) {
+			if (!timer.st) {
 				counterA--;
 				counterB--;
 
@@ -133,7 +133,7 @@ int main(void) {
 					led_st = RED_YELLOW;
 					counterB = YELLOW;
 				}
-				timer_7seg = HAL_GetTick();
+				set_timer(&timer, SECONDS);
 			}
 			break;
 		case RED_YELLOW:
@@ -141,7 +141,7 @@ int main(void) {
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, 1);
 			display7SEG(&ledA, counterA);
 			display7SEG(&ledB, counterB);
-			if (HAL_GetTick() - timer_7seg > SECONDS) {
+			if (!timer.st) {
 				counterA--;
 				counterB--;
 				if (counterA <= 0 || counterB <= 0) {
@@ -149,7 +149,7 @@ int main(void) {
 					counterA = GREEN;
 					counterB = GREEN + YELLOW;
 				}
-				timer_7seg = HAL_GetTick();
+				set_timer(&timer, SECONDS);
 			}
 			break;
 		case GREEN_RED:
@@ -159,14 +159,14 @@ int main(void) {
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, 1);
 			display7SEG(&ledA, counterA);
 			display7SEG(&ledB, counterB);
-			if (HAL_GetTick() - timer_7seg > SECONDS) {
+			if (!timer.st) {
 				counterA--;
 				counterB--;
 				if (counterA <= 0 || counterB <= 0) {
 					led_st = YELLOW_RED;
 					counterA = YELLOW;
 				}
-				timer_7seg = HAL_GetTick();
+				set_timer(&timer, SECONDS);
 			}
 			break;
 		default:
@@ -174,7 +174,7 @@ int main(void) {
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, 1);
 			display7SEG(&ledA, counterA);
 			display7SEG(&ledB, counterB);
-			if (HAL_GetTick() - timer_7seg > SECONDS) {
+			if (!timer.st) {
 				counterA--;
 				counterB--;
 				if (counterA <= 0 || counterB <= 0) {
@@ -183,9 +183,11 @@ int main(void) {
 						counterA = YELLOW + GREEN;
 						counterB = GREEN;
 					}
-					timer_7seg = HAL_GetTick();
+					set_timer(&timer, SECONDS);
 				}
 			}
+			run_timer(&timer);
+			HAL_Delay(10);
 			/* USER CODE END WHILE */
 
 			/* USER CODE BEGIN 3 */
