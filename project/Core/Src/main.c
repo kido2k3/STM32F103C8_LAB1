@@ -128,7 +128,6 @@ int main(void) {
 			if (!timer.st) {
 				counterA--;
 				counterB--;
-
 				if (counterA <= 0 || counterB <= 0) {
 					led_st = RED_YELLOW;
 					counterB = YELLOW;
@@ -178,22 +177,20 @@ int main(void) {
 				counterA--;
 				counterB--;
 				if (counterA <= 0 || counterB <= 0) {
-					if (counterA < 1 || counterB < 1) {
-						led_st = RED_GREEN;
-						counterA = YELLOW + GREEN;
-						counterB = GREEN;
-					}
-					set_timer(&timer, SECONDS);
+					led_st = RED_GREEN;
+					counterA = YELLOW + GREEN;
+					counterB = GREEN;
 				}
+				set_timer(&timer, SECONDS);
 			}
-			run_timer(&timer);
-			HAL_Delay(10);
-			/* USER CODE END WHILE */
-
-			/* USER CODE BEGIN 3 */
 		}
-		/* USER CODE END 3 */
+		run_timer(&timer);
+		HAL_Delay(10);
+		/* USER CODE END WHILE */
 	}
+	/* USER CODE BEGIN 3 */
+
+	/* USER CODE END 3 */
 }
 /**
  * @brief System Clock Configuration
