@@ -22,6 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include"../MyLib/segment_led.h"
+#include"../MyLib/software_timer.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -73,7 +74,7 @@ int main(void) {
 
 	/* USER CODE BEGIN Init */
 	unsigned short counter = 0;
-	unsigned long cur_time = HAL_GetTick();
+	struct s_timer timer;
 	struct seven_led led;
 	/* USER CODE END Init */
 
@@ -81,26 +82,28 @@ int main(void) {
 	SystemClock_Config();
 
 	/* USER CODE BEGIN SysInit */
-
+	set_timer(&timer, TIME_DELAY);
 	/* USER CODE END SysInit */
 
 	/* Initialize all configured peripherals */
 	MX_GPIO_Init();
 	/* USER CODE BEGIN 2 */
 	init7SEG(&led, GPIO_PIN_1, GPIO_PIN_2, GPIO_PIN_3, GPIO_PIN_4, GPIO_PIN_5,
-			GPIO_PIN_6, GPIO_PIN_7);
+	GPIO_PIN_6, GPIO_PIN_7);
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1) {
-		if (counter > 9)
-			counter = 0;
 		display7SEG(&led, counter);
-		if (HAL_GetTick() - cur_time > TIME_DELAY) {
-			cur_time = HAL_GetTick();
+		if (!timer.st) {
 			counter++;
+			if (counter > 9)
+				counter = 0;
+			set_timer(&timer, TIME_DELAY);
 		}
+		run_timer(&timer);
+		HAL_Delay(10);
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
