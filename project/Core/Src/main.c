@@ -18,7 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+#include "../MyLib/software_timer.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -35,8 +35,8 @@
 #define RED_YELLOW 1
 #define YELLOW_RED 2
 #define GREEN_RED 3
-#define TIME_GREEN 3000 //3s
-#define TIME_YELLOW 2000 //2s
+#define TIME_GREEN 300 //3s
+#define TIME_YELLOW 200 //2s
 
 /* USER CODE END PD */
 
@@ -79,14 +79,14 @@ int main(void) {
 
 	/* USER CODE BEGIN Init */
 	unsigned short led_st = 0;
-	unsigned long cur_time = HAL_GetTick();
+	struct s_timer timer;
 	/* USER CODE END Init */
 
 	/* Configure the system clock */
 	SystemClock_Config();
 
 	/* USER CODE BEGIN SysInit */
-
+	set_timer(&timer, TIME_GREEN);
 	/* USER CODE END SysInit */
 
 	/* Initialize all configured peripherals */
@@ -111,17 +111,17 @@ int main(void) {
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, 1);
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, 0);
-			if (HAL_GetTick() - cur_time > TIME_GREEN) {
+			if (!timer.st) {
 				led_st = RED_YELLOW;
-				cur_time = HAL_GetTick();
+				set_timer(&timer, TIME_YELLOW);
 			}
 			break;
 		case RED_YELLOW:
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, 0);
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, 1);
-			if (HAL_GetTick() - cur_time > TIME_YELLOW) {
+			if (!timer.st) {
 				led_st = GREEN_RED;
-				cur_time = HAL_GetTick();
+				set_timer(&timer, TIME_GREEN);
 			}
 			break;
 		case GREEN_RED:
@@ -129,19 +129,21 @@ int main(void) {
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, 0);
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, 1);
-			if (HAL_GetTick() - cur_time > TIME_GREEN) {
+			if (!timer.st) {
 				led_st = YELLOW_RED;
-				cur_time = HAL_GetTick();
+				set_timer(&timer, TIME_YELLOW);
 			}
 			break;
 		default:
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, 0);
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, 1);
-			if (HAL_GetTick() - cur_time > TIME_YELLOW) {
+			if (!timer.st) {
 				led_st = RED_GREEN;
-				cur_time = HAL_GetTick();
+				set_timer(&timer, TIME_GREEN);
 			}
 		}
+		run_timer(&timer);
+		HAL_Delay(10);
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
