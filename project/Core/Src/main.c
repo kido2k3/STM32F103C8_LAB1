@@ -17,8 +17,8 @@
  */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include "../MyLib/software_timer.h"
 #include "main.h"
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -34,9 +34,9 @@
 #define LED_RED_ON 0
 #define LED_GREEN_ON 1
 #define LED_YELLOW_ON 2
-#define TIME_RED 5000 //5s
-#define TIME_GREEN 3000 //3s
-#define TIME_YELLOW 2000 //2s
+#define TIME_RED 500 //5s
+#define TIME_GREEN 300 //3s
+#define TIME_YELLOW 200 //2s
 
 /* USER CODE END PD */
 
@@ -79,14 +79,14 @@ int main(void) {
 
 	/* USER CODE BEGIN Init */
 	unsigned short led_st = 0;
-	unsigned long cur_time = HAL_GetTick();
+	struct s_timer timer;
 	/* USER CODE END Init */
 
 	/* Configure the system clock */
 	SystemClock_Config();
 
 	/* USER CODE BEGIN SysInit */
-
+	set_timer(&timer, TIME_RED);
 	/* USER CODE END SysInit */
 
 	/* Initialize all configured peripherals */
@@ -103,29 +103,31 @@ int main(void) {
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 0);
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, 1);
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, 1);
-			if (HAL_GetTick() - cur_time > TIME_RED) {
+			if (!timer.st) {
 				led_st = LED_GREEN_ON;
-				cur_time = HAL_GetTick();
+				set_timer(&timer, TIME_GREEN);
 			}
 			break;
 		case LED_GREEN_ON:
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 1);
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, 1);
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, 0);
-			if (HAL_GetTick() - cur_time > TIME_GREEN) {
+			if (!timer.st) {
 				led_st = LED_YELLOW_ON;
-				cur_time = HAL_GetTick();
+				set_timer(&timer, TIME_YELLOW);
 			}
 			break;
 		default:
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 1);
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, 0);
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, 1);
-			if (HAL_GetTick() - cur_time > TIME_YELLOW) {
+			if (!timer.st) {
 				led_st = LED_RED_ON;
-				cur_time = HAL_GetTick();
+				set_timer(&timer, TIME_RED);
 			}
 		}
+		run_timer(&timer);
+		HAL_Delay(10);
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
