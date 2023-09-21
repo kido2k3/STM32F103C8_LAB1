@@ -18,7 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "../MyLib/software_timer.h"
-
+#include "main.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -77,7 +77,6 @@ int main(void) {
 
 	/* USER CODE BEGIN Init */
 	unsigned short led_st = 0;
-	unsigned long cur_time = HAL_GetTick();
 	struct s_timer timer;
 	/* USER CODE END Init */
 
