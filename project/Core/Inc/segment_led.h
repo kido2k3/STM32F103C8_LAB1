@@ -9,7 +9,7 @@
 #define SEGMENT_LED_H_
 
 #include <stdint.h>
-#include "../Inc/main.h"
+#include "main.h"
 struct seven_led {
 	uint16_t a;
 	uint16_t b;
