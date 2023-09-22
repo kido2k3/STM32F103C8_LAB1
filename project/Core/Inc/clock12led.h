@@ -7,7 +7,7 @@
 
 #ifndef MYLIB_CLOCK12LED_H_
 #define MYLIB_CLOCK12LED_H_
-#include"../Inc/main.h"
+#include"main.h"
 void clearAllClock();
 void setNumberOnClock(uint8_t num);
 void clearNumberOnClock(uint8_t num);

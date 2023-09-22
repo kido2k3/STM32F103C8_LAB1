@@ -21,8 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include"../MyLib/software_timer.h"
-#include"../MyLib/clock12led.h"
+#include"software_timer.h"
+#include"clock12led.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
