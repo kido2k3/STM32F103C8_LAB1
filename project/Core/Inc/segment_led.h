@@ -9,7 +9,7 @@
 #define SEGMENT_LED_H_
 
 #include <stdint.h>
-#include "../Inc/main.h"
+#include "main.h"
 struct seven_led {
 	GPIO_TypeDef *gpio;
 	uint16_t pin_a;
